@@ -1,0 +1,119 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form" xmlns:viz="sap.viz.ui5.controls" xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+	xmlns:viz.data="sap.viz.ui5.data" xmlns:chart="sap.suite.ui.commons" controllerName="com.infocus.venderApp.controller.Home">
+	<Page id="page" enableScrolling="true" showNavButton="false" navButtonPress="onNavBack" showFooter="false" titleLevel="H1">
+		<customHeader>
+			<Bar>
+				<contentMiddle>
+					<Title text="Supplier Analysis" level="H2" titleStyle="H2" class="customTitleCenter"/>
+				</contentMiddle>
+			</Bar>
+		</customHeader>
+		<content>
+			<FlexBox id="panelFormBox" direction="Column" height="auto" justifyContent="Center" alignItems="Center"
+				class="sapUiTinyMarginTop sapUiSizeCompact">
+				<items>
+					<!-- Radio Button Section -->
+					<!--<FlexBox width="auto" id="RadioBtn" wrap="NoWrap" justifyContent="Center" alignItems="Center">
+						<RadioButtonGroup id="radioBtnlist" columns="4" select="onRadioButtonSelectList" class="styledRadioGroup">
+							<RadioButton id="fiscalYearWise" text="Fiscal Year Wise"/>
+							<RadioButton id="quaterlyWise" text="Quaterly Wise"/>
+							<RadioButton id="supplierDue" text="Supplier Due"/>
+							<RadioButton id="supplierDueQtrFy" text="Supplier Due QTR/FY"/>
+						</RadioButtonGroup>
+					</FlexBox>-->
+					<!-- Input Fields Section -->
+					<FlexBox width="auto" id="inputBoxes" wrap="NoWrap" justifyContent="Center" alignItems="Center">
+						<HBox id="companyCodeMasterBox" direction="Column" alignItems="Center" visible="true" class="sapUiTinyMarginBegin">
+							<Input id="_companyCodeInputId" type="Text" tooltip="Select from list" placeholder="Company Code" class="boldText roundedInput"
+								showValueHelp="true" showClearIcon="true" value="{globalData>/selectedCompanyCodeNamesDisplay}"
+								valueHelpRequest="handleValueCompanyCodeMaster" required="true" valueHelpOnly="true"/>
+						</HBox>
+						<HBox id="venderMasterBox" direction="Column" alignItems="Center" visible="true" class="sapUiTinyMarginBegin">
+							<Input id="_VenderInputId" type="Text" tooltip="Select from list" placeholder="Vender Code" class="boldText roundedInput"
+								showValueHelp="true" showClearIcon="true" value="{globalData>/selectedVenderNamesDisplay}" valueHelpRequest="handleValueVenderMaster"
+								required="true" valueHelpOnly="true"/>
+						</HBox>
+						<HBox id="accountGroupBox" direction="Column" alignItems="Center" visible="true" class="sapUiTinyMarginBegin">
+							<Input id="_accountGroupId" type="Text" tooltip="Select from list" placeholder="Account Group" class="boldText roundedInput"
+								showValueHelp="true" showClearIcon="true" value="{globalData>/selectedAccountGroupDisplay}" valueHelpRequest="handleValueAccountGroup"
+								required="true" valueHelpOnly="true"/>
+						</HBox>
+						<HBox id="venderDatePickerBox" direction="Column" alignItems="Center" visible="true" class="sapUiTinyMarginBegin">
+							<DatePicker id="_venderDatePickerId" value="{globalData>/selectedVenderDate}" placeholder="Select Due Date" required="true"
+								class="boldText roundedInput" change="onVenderDateChange" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd"/>
+						</HBox>
+						<!-- Action Buttons (Search and Clear) -->
+						<HBox id="buttonBox" direction="Row" justifyContent="Center" alignItems="Center">
+							<Button id="searchData" icon="sap-icon://sales-order" press="getVendorHistoryBackendData" class="sapUiTinyMarginBegin" type="Accept"
+								tooltip="Execute"/>
+							<Button id="clearData" icon="sap-icon://delete" press="clearListData" class="sapUiTinyMarginBegin" type="Reject" tooltip="Clear All Data"/>
+						</HBox>
+					</FlexBox>
+				</items>
+			</FlexBox>
+			<!-- Panel for normal view -->
+			<Panel id="panelNormalViewBox" expandable="false" expanded="false" visible="true" class="sapUiResponsiveMargin" backgroundDesign="Solid"
+				width="auto" height="100%">
+				<content>
+					<!-- IconTabBar for switching between scenarios -->
+					<IconTabBar id="iconTabBar" selectedKey="scenario1" select="onTabSelect" stretchContentHeight="true" class="beautifulTabBar">
+						<items>
+							<!-- Scenario 1 -->
+							<IconTabFilter key="scenario1" text="Supplier Analysis" icon="sap-icon://group" tooltip="Supplier Analysis" iconColor="Positive"
+								design="Horizontal">
+								<content>
+									<VBox visible="{globalData>/isChartFragment1Visible}">
+										<core:Fragment id="chartFragment1" fragmentName="com.infocus.venderApp.view.fragments.Charts.ChartFragment1" type="XML"/>
+									</VBox>
+									<!--<VBox visible="{globalData>/isChartFragment2Visible}">
+										<core:Fragment id="chartFragment2" fragmentName="com.infocus.venderApp.view.fragments.Charts.ChartFragment2" type="XML"/>
+									</VBox>-->
+								</content>
+							</IconTabFilter>
+							<IconTabSeparator/>
+							<!-- Scenario 2 -->
+							<!--<IconTabFilter key="scenario2" text="Top 5 Supplier Turnover" icon="sap-icon://customer" tooltip="Top 5 Supplier Turnover"
+								design="Horizontal">
+								<content>
+									<VBox visible="{globalData>/isChartFragment3Visible}">
+										<core:Fragment id="chartFragment3" fragmentName="com.infocus.purchaseApplication.view.fragments.Charts.ChartFragment3" type="XML"/>
+									</VBox>
+									<VBox visible="{globalData>/isChartFragment4Visible}">
+										<core:Fragment id="chartFragment4" fragmentName="com.infocus.purchaseApplication.view.fragments.Charts.ChartFragment4" type="XML"/>
+									</VBox>
+								</content>
+							</IconTabFilter>
+							<IconTabSeparator/>-->
+							<!-- Scenario 3 -->
+							<!--<IconTabFilter key="scenario3" text="Single Supplier Turnover" icon="sap-icon://employee-lookup" tooltip="Single Supplier Turnover"
+								iconColor="Critical" design="Horizontal">
+								<content>
+									<VBox visible="{globalData>/isChartFragment5Visible}">
+										<core:Fragment id="chartFragment5" fragmentName="com.infocus.purchaseApplication.view.fragments.Charts.ChartFragment5" type="XML"/>
+									</VBox>
+									<VBox visible="{globalData>/isChartFragment6Visible}">
+										<core:Fragment id="chartFragment6" fragmentName="com.infocus.purchaseApplication.view.fragments.Charts.ChartFragment6" type="XML"/>
+									</VBox>
+								</content>
+							</IconTabFilter>
+							<IconTabSeparator/>-->
+							<!-- Scenario 4 -->
+							<!--<IconTabFilter key="scenario4" text="Purchase Turnover" icon="sap-icon://customer-financial-fact-sheet" tooltip="Purchase Turnover"
+								iconColor="Negative" design="Horizontal">
+								<content>
+									<VBox visible="{globalData>/isChartFragment7Visible}">
+										<core:Fragment id="chartFragment7" fragmentName="com.infocus.purchaseApplication.view.fragments.Charts.ChartFragment7" type="XML"/>
+									</VBox>
+									<VBox visible="{globalData>/isChartFragment8Visible}">
+										<core:Fragment id="chartFragment8" fragmentName="com.infocus.purchaseApplication.view.fragments.Charts.ChartFragment8" type="XML"/>
+									</VBox>
+								</content>
+							</IconTabFilter>-->
+						</items>
+					</IconTabBar>
+				</content>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

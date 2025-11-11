@@ -1,0 +1,82 @@
+{
+    "resources": [
+        {
+            "name": "model/models.js"
+        },
+        {
+            "name": "Component.js"
+        },
+        {
+            "name": "i18n/i18n.properties",
+            "raw": "i18n/i18n.properties"
+        },
+        {
+            "name": "view/fragments/Charts/ChartFragment1.fragment.xml"
+        },
+        {
+            "name": "view/fragments/Charts/ChartFragment3.fragment.xml"
+        },
+        {
+            "name": "view/fragments/Charts/ChartFragment2.fragment.xml"
+        },
+        {
+            "name": "view/fragments/Charts/ChartFragment4.fragment.xml"
+        },
+        {
+            "name": "view/Home.view.xml"
+        },
+        {
+            "name": "view/App.view.xml"
+        },
+        {
+            "name": "view/dialogComponent/DialogVenderMaster.fragment.xml"
+        },
+        {
+            "name": "view/dialogComponent/DialogAccountGroup.fragment.xml"
+        },
+        {
+            "name": "view/dialogComponent/DialogCompanyCodeMaster.fragment.xml"
+        },
+        {
+            "name": "manifest.json"
+        },
+        {
+            "name": ".user.project.json"
+        },
+        {
+            "name": "neo-app.json"
+        },
+        {
+            "name": "index.html"
+        },
+        {
+            "name": ".project.json"
+        },
+        {
+            "name": "libs/html2pdf.bundle.js"
+        },
+        {
+            "name": "webapp/localService/metadata.xml"
+        },
+        {
+            "name": "Component-preload.js",
+            "merged": true
+        },
+        {
+            "name": "css/style.css"
+        },
+        {
+            "name": "controller/Home.controller.js"
+        },
+        {
+            "name": "controller/App.controller.js"
+        },
+        {
+            "name": "controller/BaseController.js"
+        },
+        {
+            "name": "resources.json",
+            "merged": true
+        }
+    ]
+}
