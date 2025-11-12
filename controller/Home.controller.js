@@ -54,11 +54,11 @@ sap.ui.define([
 			// Friendly field names
 			var mFieldNames = {
 				"_companyCodeInputId": "Company Code",
-				"_VenderInputId": "Vendor Code",
+				// "_VenderInputId": "Vendor Code",
 				"_venderDatePickerId": "Due Date"
 			};
 
-			var aInputIds = ["_companyCodeInputId", "_VenderInputId", "_venderDatePickerId"];
+			var aInputIds = ["_companyCodeInputId", "_venderDatePickerId"];
 			var bAllValid = true;
 			var aEmptyFields = [];
 
@@ -882,7 +882,7 @@ sap.ui.define([
 				}
 			});
 		},
-		_buildVendorHistoryFilters: function(sCompanyCode, aVenderCodes, sVenderDate, sAccountGroup) {
+		_buildVendorHistoryFilters2: function(sCompanyCode, aVenderCodes, sVenderDate, sAccountGroup) {
 			var aFilters = [];
 
 			// Company Code filter
@@ -923,21 +923,21 @@ sap.ui.define([
 
 			// return aFilters;
 			if (aVenderCodes.length && sAccountGroup.length) {
-					aFilters.push(new Filter({
-						filters: [
-							new Filter({
-								filters: aVendorFilters,
-								and: false
-							}),
-							new Filter({
-								filters: aAccountGroupFilters,
-								and: false
-							})
-						],
-						and: true
-					}));
-				}
-				return aFilters;
+				aFilters.push(new Filter({
+					filters: [
+						new Filter({
+							filters: aVendorFilters,
+							and: false
+						}),
+						new Filter({
+							filters: aAccountGroupFilters,
+							and: false
+						})
+					],
+					and: true
+				}));
+			}
+			return aFilters;
 		},
 		// _buildVendorHistoryFilters: function(sCompanyCode, aVenderCodes, sVenderDate, sAccountGroup) {
 
@@ -983,6 +983,77 @@ sap.ui.define([
 		// 		filters: aMainFilters
 		// 	});
 		// },
+
+		_buildVendorHistoryFilters: function(sCompanyCode, aVenderCodes, sVenderDate, aAccountGroup) {
+
+			var aFilters = [];
+
+			// Company Code
+			if (sCompanyCode) {
+				aFilters.push(new sap.ui.model.Filter("bukrs", sap.ui.model.FilterOperator.EQ, sCompanyCode));
+			}
+
+			// Prepare vendor filters only if selected
+			var aVendorFilters = [];
+			if (aVenderCodes && aVenderCodes.length > 0) {
+				aVendorFilters = aVenderCodes.map(function(sCode) {
+					return new sap.ui.model.Filter("lifnr", sap.ui.model.FilterOperator.EQ, sCode);
+				});
+			}
+
+			// Prepare account group filters only if selected
+			var aAccountGroupFilters = [];
+			if (aAccountGroup && aAccountGroup.length > 0) {
+				aAccountGroupFilters = aAccountGroup.map(function(sCode) {
+					return new sap.ui.model.Filter("ktokk", sap.ui.model.FilterOperator.EQ, sCode);
+				});
+			}
+
+			// ▶ If BOTH vendor and account group selected → combine with AND
+			if (aVendorFilters.length > 0 && aAccountGroupFilters.length > 0) {
+				aFilters.push(
+					new sap.ui.model.Filter({
+						filters: [
+							new sap.ui.model.Filter({
+								filters: aVendorFilters,
+								and: false
+							}),
+							new sap.ui.model.Filter({
+								filters: aAccountGroupFilters,
+								and: false
+							})
+						],
+						and: true
+					})
+				);
+			}
+			// ▶ If ONLY vendor selected
+			else if (aVendorFilters.length > 0) {
+				aFilters.push(
+					new sap.ui.model.Filter({
+						filters: aVendorFilters,
+						and: false
+					})
+				);
+			}
+			// ▶ If ONLY account group selected
+			else if (aAccountGroupFilters.length > 0) {
+				aFilters.push(
+					new sap.ui.model.Filter({
+						filters: aAccountGroupFilters,
+						and: false
+					})
+				);
+			}
+
+			// Date filter (optional)
+			if (sVenderDate) {
+				aFilters.push(new sap.ui.model.Filter("budat", sap.ui.model.FilterOperator.LE, sVenderDate));
+			}
+
+			// ✅ If NO vendor + NO account group → Return current filters only (company/date)
+			return aFilters;
+		},
 
 		/*************** helper function  *****************/
 
@@ -1054,7 +1125,7 @@ sap.ui.define([
 						// 		}
 						// 	}
 						// });
-						
+
 						aInputIds.forEach((sId) => {
 							const oInput = that.byId(sId);
 							if (oInput) oInput.setValue("");
@@ -1097,6 +1168,51 @@ sap.ui.define([
 				}
 			});
 		},
+		onSortTable: function(oEvent) {
+			oEvent.preventDefault(); // Prevent default sorting
+
+			var oTable = oEvent.getSource();
+			var oColumn = oEvent.getParameter("column");
+			var sSortProperty = oColumn.getSortProperty();
+			var bDescending = oEvent.getParameter("sortOrder") === "Descending";
+
+			var oBinding = oTable.getBinding("rows");
+
+			// Define numeric columns (from your metadata)
+			var aNumericCols = [
+				"netpr", "wrbtr", "netwr", "vend_adv",
+				"creditor", "lc", "factoring",
+				"rxil", "abg", "pbg"
+			];
+
+			// Custom sorter with comparator
+			var oSorter = new sap.ui.model.Sorter(
+				sSortProperty,
+				bDescending,
+				false,
+				function(a, b) {
+					// Check if this field is numeric
+					if (aNumericCols.includes(sSortProperty)) {
+						var nA = parseFloat(a) || 0;
+						var nB = parseFloat(b) || 0;
+						return nA - nB;
+					} else {
+						// String comparison (default)
+						return a < b ? -1 : a > b ? 1 : 0;
+					}
+				}
+			);
+
+			// Apply sorter
+			oBinding.sort(oSorter);
+
+			// Update sort icon state
+			oTable.getColumns().forEach(function(col) {
+				col.setSorted(false);
+			});
+			oColumn.setSorted(true);
+			oColumn.setSortOrder(bDescending ? "Descending" : "Ascending");
+		}
 
 	});
 });
